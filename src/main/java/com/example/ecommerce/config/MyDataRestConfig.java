@@ -1,10 +1,13 @@
 package com.example.ecommerce.config;
 
+import com.example.ecommerce.entity.County;
 import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.entity.ProductCategory;
+import com.example.ecommerce.entity.Town;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+import org.springframework.data.rest.core.mapping.ExposureConfigurer;
 import org.springframework.data.rest.core.mapping.HttpMethods;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.HttpMethod;
@@ -30,22 +33,30 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 //        RepositoryRestConfigurer.super.configureRepositoryRestConfiguration(config, cors);
         HttpMethod[] theUnsupportedMethods ={HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
 
-//        diasble http methods for Product: put, post and delete
+//        disable http methods for Product: put, post and delete
 
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedMethods))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedMethods));
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(Product.class), theUnsupportedMethods);
 
-        //        diasble http methods for ProductCategory: put, post and delete
+        //        disable http methods for ProductCategory: put, post and delete
 
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedMethods))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedMethods));
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(ProductCategory.class), theUnsupportedMethods);
+
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(County.class), theUnsupportedMethods);
+
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(Town.class), theUnsupportedMethods);
 
 //        call an internal method
         exposeIds(config);
+    }
+
+    private void disableHttpMethods(ExposureConfigurer config, HttpMethod[] theUnsupportedMethods) {
+        config
+                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedMethods))
+                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedMethods));
     }
 
     private void exposeIds(RepositoryRestConfiguration config) {
