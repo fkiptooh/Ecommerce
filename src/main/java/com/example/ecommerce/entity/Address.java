@@ -27,4 +27,8 @@ public class Address {
 
     @Column(name = "postal_code")
     private String postalCode;
+
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private Order order;
 }
